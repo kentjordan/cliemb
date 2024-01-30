@@ -7,9 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import loginSchema from "@/schemas/login/login.schema";
 
 const LoginPage = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
   return (
     <div style={{ backgroundImage: `url(${BSUBuilding.src})` }} className="flex h-full w-full flex-col bg-cover">
@@ -30,7 +34,12 @@ const LoginPage = () => {
         {/* Login Form */}
         <div className="m-4 flex h-fit w-full flex-col items-center rounded-2xl bg-white p-8 shadow md:m-0 md:ml-16 md:w-fit md:px-16 md:py-10">
           <Image src={BSULogo} quality={100} className="mb-12" width={140} height={140} alt="BSU Logo" />
-          <form className="my-2 flex w-full flex-col gap-4" onSubmit={handleSubmit(() => {})}>
+          <form
+            className="my-2 flex w-full flex-col gap-4"
+            onSubmit={handleSubmit((data) => {
+              console.log(data);
+            })}
+          >
             <Input {...register("email")} className="w-full rounded-3xl text-base md:w-96" placeholder="Email" />
             <Input
               {...register("password")}
