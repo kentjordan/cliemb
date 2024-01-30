@@ -6,10 +6,14 @@ import CLIEMBLogo from "@/assets/cliemb.png";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import signupSchma from "@/schemas/signup/signup.schema";
 import Link from "next/link";
 
-const LoginPage = () => {
-  const { register, handleSubmit } = useForm();
+const SignupPage = () => {
+  const { register, handleSubmit } = useForm({
+    resolver: zodResolver(signupSchma),
+  });
 
   return (
     <div style={{ backgroundImage: `url(${BSUBuilding.src})` }} className="flex h-full w-full flex-col bg-cover">
@@ -30,7 +34,15 @@ const LoginPage = () => {
         {/* Login Form */}
         <div className="m-4 flex h-fit w-full flex-col items-center rounded-2xl bg-white p-8 shadow md:m-0 md:ml-16 md:w-fit md:px-16 md:py-10">
           <Image src={BSULogo} quality={100} className="mb-12" width={140} height={140} alt="BSU Logo" />
-          <form className="my-2 flex w-full flex-col gap-4" onSubmit={handleSubmit(() => {})}>
+          <form
+            className="my-2 flex w-full flex-col gap-4"
+            onSubmit={handleSubmit((data) => {
+              console.log(data);
+            })}
+          >
+            <Input {...register("first_name")} className="w-full rounded-3xl text-base md:w-96" placeholder="First name" />
+            <Input {...register("last_name")} className="w-full rounded-3xl text-base md:w-96" placeholder="Last name" />
+            <Input {...register("position")} className="w-full rounded-3xl text-base md:w-96" placeholder="Position" />
             <Input {...register("email")} className="w-full rounded-3xl text-base md:w-96" placeholder="Email" />
             <Input
               {...register("password")}
@@ -38,12 +50,12 @@ const LoginPage = () => {
               className="w-full rounded-3xl text-base md:w-96"
               placeholder="Password"
             />
-            <Button className="my-3 rounded-3xl bg-[#B20303] p-6 text-lg font-bold hover:bg-[#B20303]">LOGIN</Button>
+            <Button className="my-3 rounded-3xl bg-[#B20303] p-6 text-lg font-bold hover:bg-[#B20303]">SIGNUP</Button>
           </form>
           <div>
-            <span className="my-2">Dont have an account? </span>
-            <Link href="/signup" className="my-2 font-bold">
-              Signup
+            <span className="my-2">Already registered? </span>
+            <Link href="/login" className="my-2 font-bold">
+              Login
             </Link>
           </div>
         </div>
@@ -52,4 +64,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;
