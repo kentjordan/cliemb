@@ -1,18 +1,17 @@
-import type { Metadata } from "next";
+"use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Provider } from "react-redux";
+import store from "@/redux/store";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Clinic Monitoring System",
-  description: "Clinic Monitoring System for Batangas State University",
-};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} h-screen w-screen`}>{children}</body>
+      <body className={`${inter.className} h-screen`}>
+        <Provider store={store}>{children}</Provider>
+      </body>
     </html>
   );
 }
