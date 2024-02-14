@@ -10,9 +10,15 @@ const DashboardPage = () => {
   return (
     <div className="flex w-full items-center justify-center">
       <div className="flex flex-col gap-4">
-        <Link href="/dashboard/cit-department">CIT Department</Link>
-        <Link href="/dashboard/emergency-hotlines">Emergency Hotlines</Link>
-        <Link href="/dashboard/monitoring-system">Monitoring System</Link>
+        <Link className="bg-red-700 p-8 text-2xl text-white" href="/dashboard/cit-department">
+          CIT Department
+        </Link>
+        <Link className="bg-red-700 p-8 text-2xl text-white" href="/dashboard/emergency-hotlines">
+          Emergency Hotlines
+        </Link>
+        <Link className="bg-red-700 p-8 text-2xl text-white" href="/dashboard/monitoring-system">
+          Monitoring System
+        </Link>
       </div>
     </div>
   );
