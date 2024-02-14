@@ -62,6 +62,16 @@ const LoginPage = () => {
                   if (error.code === "ERR_NETWORK") {
                     alert("We can't reach the server. Please try again.");
                   }
+
+                  if (error.response?.status === 400) {
+                    alert(error.response.data.message);
+                  }
+                  if (error.response?.status === 404) {
+                    alert("Account was  not found.");
+                  }
+                  if (error.response?.status === 500) {
+                    alert(error.response?.data.message);
+                  }
                 }
               }
             })}
