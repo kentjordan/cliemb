@@ -1,5 +1,5 @@
 "use client";
-import Sidebar from "@/components/dashboard/sidebar";
+import Sidebar from "@/components/authd/sidebar";
 import Image from "next/image";
 import CLIEMBLogo from "@/assets/cliemb.png";
 import { Provider } from "react-redux";
