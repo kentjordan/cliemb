@@ -12,7 +12,7 @@ const DeleteUserDialog = ({ selectedItem, deleteDialogStateVisibility }: IDelete
         <span className="border-b pb-2 text-xl font-bold">⚠️ Are you sure?</span>
         <span className="my-3">Deleting a user is irreversible.</span>
         <span className="mt-1">
-          Name:
+          Name:{" "}
           <b>
             {selectedItem?.first_name} {selectedItem?.last_name}
           </b>
