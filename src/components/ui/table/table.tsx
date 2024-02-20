@@ -26,7 +26,7 @@ export interface IUpdateDialogProps {
 }
 
 interface ITableProps {
-  columns: Array<{ title: string; accessorKey: string | undefined }>;
+  columns: Array<{ title: string; accessorKey: string | undefined; render?: (args: { item: any; data: any }) => JSX.Element }>;
   data: Array<any>;
   enabledActions: boolean;
   deleteDialog: {
@@ -38,7 +38,8 @@ interface ITableProps {
 }
 
 function Table({ columns, data, enabledActions, deleteDialog, updateDialog }: ITableProps) {
-  if (enabledActions) columns = [{ title: "Actions", accessorKey: undefined }, ...columns];
+  if (enabledActions)
+    columns = [{ title: "Actions", accessorKey: undefined, render: ({ item, data }) => <>{data}</> }, ...columns];
 
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [itemUpdateState, setItemUpdateState] = useState(false);
@@ -103,9 +104,15 @@ function Table({ columns, data, enabledActions, deleteDialog, updateDialog }: IT
                         />
                       </td>
                     )}
-                    {columns.slice(1, columns.length).map(({ accessorKey }) => (
-                      <td key={accessorKey} className="py-3 text-center">
-                        {item[accessorKey as string]}
+                    {columns.slice(enabledActions ? 1 : 0, columns.length).map(({ accessorKey, render }) => (
+                      <td key={accessorKey} className="border border-stone-300 p-2 text-center">
+                        {render ? (
+                          render({ item, data: item[accessorKey as string] })
+                        ) : (
+                          <span className="inline-block max-w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                            {item[accessorKey as string]}
+                          </span>
+                        )}
                       </td>
                     ))}
                   </tr>
