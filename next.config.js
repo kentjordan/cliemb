@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [{ hostname: "localhost" }],
+  },
   reactStrictMode: false,
   env: {
     jwt_secret_key: `-7_z~&|ne<fw&3I3'7IsCb^#7}2hjo2{+^Zl3(Rv{9}[T:&5LJ`,
