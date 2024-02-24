@@ -1,10 +1,14 @@
 import customAxios from "@/api/axios.custom";
 import Table from "@/components/ui/table/table";
 import useAppState from "@/hooks/useAppState";
+import range from "@/utils/range";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoIosExpand, IoMdCloseCircle } from "react-icons/io";
 import { Socket } from "socket.io-client";
+
+const LIMIT = 5;
+const DEBOUNCE_TIME = 200;
 
 const CompletedTable = ({ socket }: { socket: Socket }) => {
   const [monitoringData, setMonitoringData] = useState([]);
@@ -13,7 +17,12 @@ const CompletedTable = ({ socket }: { socket: Socket }) => {
   useEffect(() => {
     if (access_token) {
       const getMonitoringData = async () => {
-        const res = await customAxios.get("monitoring/?state=COMPLETED", {
+        const sizeRes = await customAxios.get("monitoring/size?state=COMPLETED", {
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        setMonitoringDataLength(+sizeRes.data.count);
+
+        const res = await customAxios.get(`monitoring/?state=COMPLETED&limit=${LIMIT}`, {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
@@ -46,6 +55,10 @@ const CompletedTable = ({ socket }: { socket: Socket }) => {
     }
   }, [access_token]);
 
+  const [monitoringDataLength, setMonitoringDataLength] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [currentOffset, setCurrentOffset] = useState(0);
+
   const [isDialogOpened, setIsDialogOpened] = useState(false);
 
   const [isPhotoDialogOpened, setIsPhotoDialogOpened] = useState(false);
@@ -53,6 +66,23 @@ const CompletedTable = ({ socket }: { socket: Socket }) => {
 
   const [isNarrativeDialogOpened, setIsNarrativeDialogOpened] = useState(false);
   const [activeNarrative, setActiveNarrative] = useState<string | null>(null);
+
+  const timer = useRef<any>(undefined);
+
+  useEffect(() => {
+    setCurrentPage(Math.ceil(currentOffset / 5));
+
+    const getMonitoringData = async () => {
+      const res = await customAxios.get(`monitoring/?state=COMPLETED&limit=${LIMIT}&offset=${currentOffset}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+      setMonitoringData(res.data);
+    };
+
+    getMonitoringData();
+  }, [currentOffset]);
 
   return (
     <>
@@ -299,6 +329,59 @@ const CompletedTable = ({ socket }: { socket: Socket }) => {
             },
           }}
         />
+        <div className="my-6 flex w-full justify-center gap-2">
+          <button
+            disabled={currentOffset <= 0}
+            onClick={() => {
+              clearTimeout(timer.current);
+              timer.current = setTimeout(() => setCurrentOffset((prev) => prev - 25), DEBOUNCE_TIME);
+            }}
+            className={` px-3 py-2 font-bold text-red-700 disabled:text-stone-400`}
+          >
+            PREV
+          </button>
+          {range(currentOffset, currentOffset + LIMIT).map((e, i) => {
+            if (Math.floor(currentOffset / LIMIT) + i + 1 <= Math.ceil(monitoringDataLength / LIMIT))
+              return (
+                <button
+                  key={Math.floor(currentOffset / LIMIT) + i + 1}
+                  onClick={() => {
+                    const getMonitoringData = async () => {
+                      const page = Math.floor(e / LIMIT) + i;
+                      const offset = (Math.floor(currentOffset / LIMIT) + i) * LIMIT;
+
+                      const res = await customAxios.get(`monitoring/?state=COMPLETED&limit=${LIMIT}&offset=${offset}`, {
+                        headers: {
+                          Authorization: `Bearer ${access_token}`,
+                        },
+                      });
+
+                      setMonitoringData(res.data);
+                      setCurrentPage(page);
+                    };
+                    clearTimeout(timer.current);
+                    timer.current = setTimeout(getMonitoringData, DEBOUNCE_TIME);
+                  }}
+                  className={`rounded border px-3 ${currentPage === Math.floor(e / LIMIT) + i ? "bg-red-700 text-white" : "bg-white text-black"}`}
+                >
+                  {Math.floor(currentOffset / LIMIT) + i + 1}
+                </button>
+              );
+          })}
+          <button
+            disabled={
+              Math.floor(currentOffset / LIMIT) + (monitoringDataLength % LIMIT) + 1 >=
+                Math.ceil(monitoringDataLength / LIMIT) || monitoringDataLength <= LIMIT
+            }
+            onClick={() => {
+              clearTimeout(timer.current);
+              timer.current = setTimeout(() => setCurrentOffset((prev) => prev + LIMIT ** 2), DEBOUNCE_TIME);
+            }}
+            className={` px-3 font-bold text-red-700 disabled:text-stone-400`}
+          >
+            NEXT
+          </button>
+        </div>
       </div>
     </>
   );
