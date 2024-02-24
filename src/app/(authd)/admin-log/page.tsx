@@ -1,125 +1,89 @@
 "use client";
-import { useState } from "react";
+
+import customAxios from "@/api/axios.custom";
+import Table from "@/components/ui/table/table";
+import withAuth from "@/hoc/withAuth";
+import useAppState from "@/hooks/useAppState";
+import { useEffect, useState } from "react";
 
 const AdminsLog = () => {
-  const [data, setData] = useState<
-    {
-      name: string;
-      date: string;
-      time_in: string;
-      time_out: string;
-      position: string;
-      no_of_cases: string;
-    }[]
-  >([
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-    {
-      name: "Alone J. Ante, RN",
-      date: "10-08-23",
-      time_in: "8:30 AM",
-      time_out: "5:03 PM",
-      position: "Nurse I",
-      no_of_cases: "8",
-    },
-  ]);
+  const [data, setData] = useState([]);
+
+  const { access_token } = useAppState();
+
+  useEffect(() => {
+    const getAllAdminsLog = async () => {
+      try {
+        const res = await customAxios.get("admins-log", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+
+        if (res.status === 200) {
+          setData(res.data);
+          console.log(res.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (access_token) getAllAdminsLog();
+  }, [access_token]);
 
   return (
-    <div className="h-full w-full overflow-y-auto p-4">
+    <div className="h-full w-full overflow-y-auto bg-white p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="font-bold">Admin's Log</h1>
+        <h1 className="text-xl font-bold">Admin's Log</h1>
         <input className="border p-1 text-sm" type="text" name="seach_admin" id="seach_admin" placeholder="Search admin" />
       </div>
-      <table className="w-full">
-        <thead className="bg-black text-white">
-          <tr>
-            <th className="py-2">Name</th>
-            <th>Date</th>
-            <th>Time In</th>
-            <th>Time Out</th>
-            <th>Position</th>
-            <th>No. of Cases</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((e, i) => {
-            return (
-              <tr>
-                <td className="py-3 text-center">{e.name}</td>
-                <td className="py-3 text-center">{e.date}</td>
-                <td className="py-3 text-center">{e.time_in}</td>
-                <td className="py-3 text-center">{e.time_out}</td>
-                <td className="py-3 text-center">{e.position}</td>
-                <td className="py-3 text-center">{e.no_of_cases}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <Table
+        data={data}
+        enabledActions={false}
+        columns={[
+          {
+            title: "First Name",
+            accessorKey: "first_name",
+          },
+          {
+            title: "Last Name",
+            accessorKey: "last_name",
+          },
+          {
+            title: "Position",
+            accessorKey: "position",
+          },
+          {
+            title: "Date",
+            accessorKey: "date",
+          },
+          {
+            title: "Time In",
+            accessorKey: "time_in",
+          },
+          {
+            title: "Time Out",
+            accessorKey: "time_out",
+          },
+          {
+            title: "No. of Cases",
+            accessorKey: "no_of_cases",
+          },
+        ]}
+        deleteDialog={{
+          render(props) {
+            return <></>;
+          },
+        }}
+        updateDialog={{
+          render(props) {
+            return <></>;
+          },
+        }}
+      />
     </div>
   );
 };
 
-export default AdminsLog;
+export default withAuth(AdminsLog);
