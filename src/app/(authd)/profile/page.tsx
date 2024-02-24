@@ -6,21 +6,15 @@ import customAxios from "@/api/axios.custom";
 import useAppState from "@/hooks/useAppState";
 import withAuth from "@/hoc/withAuth";
 import { AxiosError } from "axios";
+import Image from "next/image";
+import IAdminInfo from "@/types/IAdminInfo";
 
-type AdminInfo = {
-  position: string;
-  first_name: string;
-  last_name: string;
-  username: string;
-  contact_no: string;
-  email: string;
-};
 
 const ProfilePage = () => {
   const { register, handleSubmit, setValue, resetField } = useForm({});
 
   const [isFetchingData, setIsFetchingData] = useState(true);
-  const [adminInfo, setAdminInfo] = useState<AdminInfo | null>(null);
+  const [adminInfo, setAdminInfo] = useState<IAdminInfo | null>(null);
 
   const { access_token } = useAppState();
 
@@ -53,8 +47,11 @@ const ProfilePage = () => {
     }
   }, [access_token]);
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isProfileImageUploading, setIsProfileImageUploading] = useState(false);
+
   return (
-    <div className="flex w-full flex-col p-4">
+    <div className="flex w-full flex-col bg-white p-4">
       <div className="w-full p-2">
         <span className="text-2xl font-bold">Profile</span>
       </div>
@@ -244,12 +241,69 @@ const ProfilePage = () => {
           {!isFetchingData && (
             <>
               <div className="flex h-full flex-[0.5] justify-center border p-4">
-                <div className="flex h-52 w-44 flex-col items-center justify-center bg-stone-800 p-2">
-                  {/* <Image className="h-full w-full bg-white" src="" alt="" /> */}
-                  <div className=" flex-1 bg-white">
-                    <IoMdPerson className="h-full w-full" />
-                  </div>
-                  <button className="text-bold my-2 text-center text-white">Upload Picture</button>
+                <div className="flex h-64 w-64 flex-col items-center justify-center bg-stone-800 p-2">
+                  {adminInfo?.profile_photo ? (
+                    <Image
+                      quality={100}
+                      className="my-2 h-[85%] w-[85%]"
+                      src={adminInfo?.profile_photo}
+                      width={70}
+                      height={70}
+                      alt="Profile Photo"
+                    />
+                  ) : (
+                    <div className=" flex-1 bg-white">
+                      <IoMdPerson className="h-full w-full" />
+                    </div>
+                  )}
+                  {imageFile && (
+                    <div className="flex gap-2">
+                      <button
+                        className="text-bold my-2 cursor-pointer rounded bg-white px-2 text-center font-bold text-black"
+                        onClick={async () => {
+                          setIsProfileImageUploading(true);
+                          const formData = new FormData();
+                          if (imageFile) {
+                            formData.append("photo", imageFile);
+                            const res = await customAxios.post("upload/admins/dp", formData, {
+                              headers: {
+                                Authorization: `Bearer ${access_token}`,
+                              },
+                            });
+
+                            if (res.status === 201) {
+                              location.reload();
+                            }
+                          }
+                        }}
+                      >
+                        {isProfileImageUploading ? "Submitting..." : "Submit"}
+                      </button>
+                      <button
+                        className="text-bold my-2 cursor-pointer rounded bg-white px-2 text-center font-bold text-black"
+                        onClick={async () => setImageFile(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  {!imageFile && (
+                    <label htmlFor="upload-profile-photo" className="text-bold my-2 cursor-pointer text-center text-white">
+                      Upload Picture
+                    </label>
+                  )}
+                  <input
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const image = e.target.files?.item(0);
+                      if (image) {
+                        setImageFile(image);
+                      }
+                    }}
+                    type="file"
+                    id="upload-profile-photo"
+                  />
                 </div>
               </div>
               <div className="h-full flex-1 p-4">
