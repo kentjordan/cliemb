@@ -10,7 +10,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en">
       <body className="h-screen">
         <Provider store={store}>
-          <div className="flex h-full flex-col">
+          <div className="flex flex-col">
             {/* Top Bar */}
             <div className="mt-2 flex w-full items-center justify-between">
               <Image className="absolute" quality={100} src={CLIEMBLogo} width={256} alt="CLIEMB Logo" />
@@ -18,9 +18,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 <h1 className="text-xl font-bold text-white">Clinic Monitoring System</h1>
               </div>
             </div>
-            <div className="flex h-full">
+            <div className="flex h-full w-full bg-[#1F2122]">
               <Sidebar />
-              {children}
+              <div className="flex flex-1">{children}</div>
             </div>
           </div>
         </Provider>

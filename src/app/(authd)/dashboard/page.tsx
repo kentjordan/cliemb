@@ -8,7 +8,7 @@ const DashboardPage = () => {
   const { access_token } = useSelector((state: RootState) => state.appReducer);
 
   return (
-    <div className="flex w-full items-center justify-center">
+    <div className="flex w-full items-center justify-center bg-white p-4">
       <div className="flex flex-col gap-4">
         <Link className="bg-red-700 p-8 text-2xl text-white" href="/dashboard/cit-department">
           CIT Department

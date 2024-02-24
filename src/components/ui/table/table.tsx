@@ -50,7 +50,7 @@ function Table({ columns, data, enabledActions, deleteDialog, updateDialog }: IT
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   return (
-    <div className="relative w-full flex-1">
+    <div className="relative flex-1">
       {isDeleteDialogOpen && (
         <DeleteDialog>
           <deleteDialog.render

@@ -3,6 +3,7 @@ import Table from "@/components/ui/table/table";
 import useAppState from "@/hooks/useAppState";
 
 import { useEffect, useState } from "react";
+import { IoIosExpand, IoMdCloseCircle } from "react-icons/io";
 import { Socket } from "socket.io-client";
 
 const CompletedTable = ({ socket }: { socket: Socket }) => {
@@ -45,180 +46,261 @@ const CompletedTable = ({ socket }: { socket: Socket }) => {
     }
   }, [access_token]);
 
+  const [isDialogOpened, setIsDialogOpened] = useState(false);
+
+  const [isPhotoDialogOpened, setIsPhotoDialogOpened] = useState(false);
+  const [activeImageURL, setActiveImageURL] = useState<string | null>(null);
+
+  const [isNarrativeDialogOpened, setIsNarrativeDialogOpened] = useState(false);
+  const [activeNarrative, setActiveNarrative] = useState<string | null>(null);
+
   return (
-    <Table
-      enabledActions={false}
-      columns={[
-        {
-          title: "First Name",
-          accessorKey: "first_name",
-        },
-        {
-          title: "Last Name",
-          accessorKey: "last_name",
-        },
-        {
-          title: "SR-Code",
-          accessorKey: "sr_code",
-        },
-        {
-          title: "Date",
-          accessorKey: "date",
-        },
-        {
-          title: "Time",
-          accessorKey: "time",
-        },
-        {
-          title: "Room",
-          accessorKey: "room",
-        },
-        {
-          title: "Floor No.",
-          accessorKey: "floor_no",
-        },
-        {
-          title: "Photo",
-          accessorKey: "photo",
-          render: ({ item, data }) => (
-            <div>
-              <span className="inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap text-sm">{data}</span>
+    <>
+      {isPhotoDialogOpened && (
+        <div className="fixed z-10 flex h-screen w-full  items-center justify-center">
+          <div className="-translate-x-1/2 -translate-y-16  rounded border-2 border-stone-500 bg-white p-2 px-4 shadow-lg">
+            <div className="mb-3 flex w-full justify-between border-b border-b-stone-300 pb-1">
+              <span className="font-bold">Photo</span>
+              <IoMdCloseCircle
+                size={24}
+                className="cursor-pointer text-red-600"
+                onClick={() => setIsPhotoDialogOpened(false)}
+              />
             </div>
-          ),
-        },
-        {
-          title: "Narrative",
-          accessorKey: "narrative",
-          render: ({ item, data }) => (
-            <div>
-              <span className="inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap text-sm">{data}</span>
+            {activeImageURL && (
+              <img src={activeImageURL} width={300} height={300} alt="User's emergency photo" className="my-2" />
+            )}
+          </div>
+        </div>
+      )}
+      {isNarrativeDialogOpened && (
+        <div className="fixed z-10 flex h-screen w-full  items-center justify-center">
+          <div className="max-w-[50ch] -translate-x-1/4 -translate-y-16  rounded  border-2 border-stone-500 bg-white p-2 px-4 shadow-lg">
+            <div className="mb-3 flex w-full justify-between border-b border-b-stone-300 pb-1">
+              <span className="mr-8 font-bold">Narrative</span>
+              <IoMdCloseCircle
+                size={24}
+                className="cursor-pointer text-red-600"
+                onClick={() => setIsNarrativeDialogOpened(false)}
+              />
             </div>
-          ),
-        },
-        {
-          title: "Receieve",
-          accessorKey: "state",
-          render: ({ item, data }) => {
-            switch (data) {
-              case "TO RECEIVE":
-                return (
+            <span className="">{activeNarrative}</span>
+          </div>
+        </div>
+      )}
+      <div>
+        {isDialogOpened && (
+          <div className="absolute z-10 flex h-full w-full items-center justify-center bg-black/50">
+            <div className="h-80 w-80 rounded bg-white p-1">
+              <div className="flex w-full justify-end">
+                <IoMdCloseCircle size={24} className="cursor-pointer text-red-600" onClick={() => setIsDialogOpened(false)} />
+              </div>
+            </div>
+          </div>
+        )}
+        <Table
+          enabledActions={false}
+          columns={[
+            {
+              title: "First Name",
+              accessorKey: "first_name",
+            },
+            {
+              title: "Last Name",
+              accessorKey: "last_name",
+            },
+            {
+              title: "SR-Code",
+              accessorKey: "sr_code",
+            },
+            {
+              title: "Date",
+              accessorKey: "date",
+            },
+            {
+              title: "Time",
+              accessorKey: "time",
+            },
+            {
+              title: "Room",
+              accessorKey: "room",
+            },
+            {
+              title: "Floor No.",
+              accessorKey: "floor_no",
+            },
+            {
+              title: "Photo",
+              accessorKey: "photo",
+              render: ({ item, data }: { item: any; data: string[] }) => {
+                return data ? (
                   <button
-                    onClick={async () => {
-                      const res = await customAxios.patch(
-                        `monitoring/state/${item.user_id}`,
-                        {
-                          state: "PENDING",
-                          monitoring_id: item.monitoring_id,
-                        },
-                        {
-                          headers: {
-                            Authorization: `Bearer ${access_token}`,
-                          },
-                        },
-                      );
-                      location.reload();
+                    className="flex w-full items-center justify-center"
+                    onClick={() => {
+                      setIsPhotoDialogOpened(true);
+                      setActiveImageURL(data.at(0) as string);
                     }}
-                    className="flex w-full items-center justify-center rounded bg-red-700 px-2 py-1 text-white"
                   >
-                    <span className="inline-block overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize">
-                      receive
+                    <IoIosExpand className="mx-1 text-blue-600" />
+                    <span className="mx-1 inline-block cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-sm text-blue-600">
+                      View
                     </span>
                   </button>
+                ) : (
+                  <>None</>
                 );
-              case "PENDING":
-                return (
+              },
+            },
+            {
+              title: "Narrative",
+              accessorKey: "narrative",
+              render: ({ item, data }) => {
+                return data ? (
                   <button
-                    onClick={async () => {
-                      const res = await customAxios.patch(
-                        `monitoring/state/${item.user_id}`,
-                        {
-                          state: "COMPLETED",
-                          monitoring_id: item.monitoring_id,
-                        },
-                        {
-                          headers: {
-                            Authorization: `Bearer ${access_token}`,
-                          },
-                        },
-                      );
-                      location.reload();
+                    className="flex w-full items-center justify-center"
+                    onClick={() => {
+                      setIsNarrativeDialogOpened(true);
+                      setActiveNarrative(data);
                     }}
-                    className="flex w-full items-center justify-center rounded bg-stone-500 px-2 py-1 text-white"
                   >
-                    <span className="inline-block overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize">
-                      {data.toLowerCase()}
+                    <IoIosExpand className="mx-1 text-blue-600" />
+                    <span className="inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                      {data}
                     </span>
                   </button>
+                ) : (
+                  <>
+                    <span className="inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap text-sm"></span>
+                  </>
                 );
-              case "COMPLETED":
-                return (
-                  <button
-                    disabled
-                    onClick={() => alert(item.id)}
-                    className="flex w-full items-center justify-center rounded bg-green-500 px-2 py-1 text-white"
-                  >
-                    <span className="inline-block overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize">
-                      completed
-                    </span>
-                  </button>
-                );
-              default:
-                return (
-                  <div>
-                    <span className="inline-block overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize">
-                      {data.toLowerCase()}
-                    </span>
-                  </div>
-                );
-            }
-          },
-        },
-        {
-          title: "Level",
-          accessorKey: "emergency_level",
-          render: ({ item, data }) => {
-            switch (data) {
-              case 1:
-                return (
-                  <div className="flex items-center justify-center">
-                    <div className="h-8 w-8 bg-red-700"></div>
-                  </div>
-                );
-              case 2:
-                return (
-                  <div className="flex items-center justify-center">
-                    <div className="h-8 w-8 bg-amber-500"></div>
-                  </div>
-                );
-              case 3:
-                return (
-                  <div className="flex items-center justify-center">
-                    <div className="h-8 w-8 bg-yellow-300"></div>
-                  </div>
-                );
-              case 4:
-                return (
-                  <div className="flex items-center justify-center">
-                    <div className="h-8 w-8 bg-lime-500"></div>
-                  </div>
-                );
-            }
-            return <div></div>;
-          },
-        },
-      ]}
-      data={monitoringData}
-      deleteDialog={{
-        render(props) {
-          return <></>;
-        },
-      }}
-      updateDialog={{
-        render(props) {
-          return <></>;
-        },
-      }}
-    />
+              },
+            },
+            {
+              title: "Receieve",
+              accessorKey: "state",
+              render: ({ item, data }) => {
+                switch (data) {
+                  case "TO RECEIVE":
+                    return (
+                      <button
+                        onClick={async () => {
+                          const res = await customAxios.patch(
+                            `monitoring/state/${item.user_id}`,
+                            {
+                              state: "PENDING",
+                              monitoring_id: item.monitoring_id,
+                            },
+                            {
+                              headers: {
+                                Authorization: `Bearer ${access_token}`,
+                              },
+                            },
+                          );
+                          location.reload();
+                        }}
+                        className="flex w-full items-center justify-center rounded bg-red-700 px-2 py-1 text-white"
+                      >
+                        <span className="inline-block overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize">
+                          receive
+                        </span>
+                      </button>
+                    );
+                  case "PENDING":
+                    return (
+                      <button
+                        onClick={async () => {
+                          const res = await customAxios.patch(
+                            `monitoring/state/${item.user_id}`,
+                            {
+                              state: "COMPLETED",
+                              monitoring_id: item.monitoring_id,
+                            },
+                            {
+                              headers: {
+                                Authorization: `Bearer ${access_token}`,
+                              },
+                            },
+                          );
+                          location.reload();
+                        }}
+                        className="flex w-full items-center justify-center rounded bg-stone-500 px-2 py-1 text-white"
+                      >
+                        <span className="inline-block overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize">
+                          {data.toLowerCase()}
+                        </span>
+                      </button>
+                    );
+                  case "COMPLETED":
+                    return (
+                      <button
+                        disabled
+                        onClick={() => alert(item.id)}
+                        className="flex w-full items-center justify-center rounded bg-green-500 px-2 py-1 text-white"
+                      >
+                        <span className="inline-block overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize">
+                          completed
+                        </span>
+                      </button>
+                    );
+                  default:
+                    return (
+                      <div>
+                        <span className="inline-block overflow-hidden text-ellipsis whitespace-nowrap text-sm capitalize">
+                          {data.toLowerCase()}
+                        </span>
+                      </div>
+                    );
+                }
+              },
+            },
+            {
+              title: "Level",
+              accessorKey: "emergency_level",
+              render: ({ item, data }) => {
+                switch (data) {
+                  case 1:
+                    return (
+                      <div className="flex items-center justify-center">
+                        <div className="h-8 w-8 bg-red-700"></div>
+                      </div>
+                    );
+                  case 2:
+                    return (
+                      <div className="flex items-center justify-center">
+                        <div className="h-8 w-8 bg-amber-500"></div>
+                      </div>
+                    );
+                  case 3:
+                    return (
+                      <div className="flex items-center justify-center">
+                        <div className="h-8 w-8 bg-yellow-300"></div>
+                      </div>
+                    );
+                  case 4:
+                    return (
+                      <div className="flex items-center justify-center">
+                        <div className="h-8 w-8 bg-lime-500"></div>
+                      </div>
+                    );
+                }
+                return <div></div>;
+              },
+            },
+          ]}
+          data={monitoringData}
+          deleteDialog={{
+            render(props) {
+              return <></>;
+            },
+          }}
+          updateDialog={{
+            render(props) {
+              return <></>;
+            },
+          }}
+        />
+      </div>
+    </>
   );
 };
 

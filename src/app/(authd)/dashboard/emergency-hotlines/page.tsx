@@ -29,7 +29,7 @@ const EmergencyHotlinesPage = () => {
   const router = useRouter();
 
   return (
-    <div className="flex h-full w-full flex-col overflow-y-auto p-4">
+    <div className="flex h-full w-full flex-col overflow-y-auto bg-white p-4">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex">
           <h1 onClick={() => router.replace("/dashboard")} className="cursor-pointer text-xl">

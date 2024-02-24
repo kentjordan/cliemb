@@ -13,7 +13,7 @@ const MonitoringSystemPage = () => {
   const router = useRouter();
 
   return (
-    <div className="flex h-full w-full flex-col overflow-y-auto p-4">
+    <div className="flex flex-1 flex-col overflow-y-auto bg-white p-4">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex">
           <h1 onClick={() => router.replace("/dashboard")} className="cursor-pointer text-xl">
@@ -24,7 +24,7 @@ const MonitoringSystemPage = () => {
         </div>
         <input className="border p-1 text-sm" type="text" name="seach_admin" id="seach_admin" placeholder="Search..." />
       </div>
-      <div className="my-2 flex justify-around border-b border-t py-4">
+      <div className="my-2 flex justify-around border-b border-t py-2">
         <button
           onClick={() => setActiveTab("RECEIVE")}
           className={`flex cursor-pointer items-center rounded px-3 py-2 ${activeTab === "RECEIVE" ? "bg-red-700 text-white" : "bg-transparent text-black"}`}
