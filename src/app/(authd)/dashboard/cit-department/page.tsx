@@ -6,7 +6,7 @@ import Table from "@/components/ui/table/table";
 import withAuth from "@/hoc/withAuth";
 import useAppState from "@/hooks/useAppState";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const CITDepartmentPage = () => {
   const router = useRouter();
@@ -29,7 +29,7 @@ const CITDepartmentPage = () => {
   //  TODO: [✅] Populate the table by fetching the data from the API
   useEffect(() => {
     const getAllUsers = async () => {
-      const res = await customAxios.get("users/all?limit=10&offset=0", {
+      const res = await customAxios.get("users/all", {
         headers: { Authorization: `Bearer ${access_token}` },
       });
 
@@ -47,8 +47,6 @@ const CITDepartmentPage = () => {
         const res = await customAxios.get("users/analytics", { headers: { Authorization: `Bearer ${access_token}` } });
 
         if (res.status === 200) {
-          console.log(res.data);
-
           res.data.map((role: { role: string; count: string }) => {
             usersCountByRole[role.role] = role.count;
           });
@@ -66,6 +64,8 @@ const CITDepartmentPage = () => {
     }
   }, [access_token]);
 
+  const timer = useRef<any>(null);
+
   return (
     <div className="flex h-full w-full flex-col overflow-y-auto bg-white p-4">
       <div className="mb-2 flex items-center justify-between">
@@ -76,7 +76,50 @@ const CITDepartmentPage = () => {
           <h1 className="mx-4 text-xl">/</h1>
           <h1 className="text-xl font-bold">CIT Department</h1>
         </div>
-        <input className="border p-1 text-sm" type="text" name="seach_admin" id="seach_admin" placeholder="Search..." />
+        <input
+          onChange={(event) => {
+            const q = event.target.value;
+            const searchUsers = async () => {
+              try {
+                const res = await customAxios.get(`users/search?q=${q}`, {
+                  headers: {
+                    Authorization: `Bearers ${access_token}`,
+                  },
+                });
+                if (res.status === 200) {
+                  setTableData(res.data);
+                }
+              } catch (error) {
+                console.error(error);
+              }
+            };
+
+            if (q.length > 0) {
+              clearTimeout(timer.current);
+              timer.current = setTimeout(searchUsers, 200);
+            } else {
+              const getAllUsers = async () => {
+                const res = await customAxios.get("users/all", {
+                  headers: { Authorization: `Bearer ${access_token}` },
+                });
+
+                const tmp = res.data.map((user: any) => ({
+                  ...user,
+                  emergency_no: user.emergency_no.join(","),
+                  medical_conditions: user.medical_conditions.join(","),
+                }));
+
+                setTableData(tmp);
+              };
+              getAllUsers();
+            }
+          }}
+          className="border p-1 text-sm"
+          type="text"
+          name="seach_admin"
+          id="seach_admin"
+          placeholder="Search names"
+        />
       </div>
       <div className="my-2 flex justify-around border-b border-t py-2">
         <div className="flex items-center">

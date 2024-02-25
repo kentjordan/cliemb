@@ -10,7 +10,7 @@ import range from "@/utils/range";
 const LIMIT = 10;
 const DEBOUNCE_TIME = 200;
 
-const ReceivePendingTable = ({ socket }: { socket: Socket }) => {
+const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string }) => {
   const [monitoringData, setMonitoringData] = useState([]);
   const { access_token } = useAppState();
 
@@ -82,6 +82,45 @@ const ReceivePendingTable = ({ socket }: { socket: Socket }) => {
       getMonitoringData();
     }
   }, [access_token, currentOffset]);
+
+  useEffect(() => {
+    const searchUserMonitoring = async () => {
+      try {
+        const res = await customAxios.get(`monitoring/search?state=TO RECEIVE&q=${query}`, {
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        if (res.status === 200) {
+          setMonitoringData(res.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (access_token) {
+      if (query.length > 0) {
+        searchUserMonitoring();
+      } else {
+        const getMonitoringData = async () => {
+          const sizeRes = await customAxios.get("monitoring/size", {
+            headers: { Authorization: `Bearer ${access_token}` },
+          });
+          setMonitoringDataLength(+sizeRes.data.count);
+
+          const res = await customAxios.get(`monitoring/?limit=${LIMIT}`, {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          });
+
+          if (res.status === 200) {
+            setMonitoringData(res.data);
+          }
+        };
+
+        getMonitoringData();
+      }
+    }
+  }, [access_token, query]);
 
   return (
     <>

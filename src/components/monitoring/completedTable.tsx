@@ -7,10 +7,10 @@ import { useEffect, useRef, useState } from "react";
 import { IoIosExpand, IoMdCloseCircle } from "react-icons/io";
 import { Socket } from "socket.io-client";
 
-const LIMIT = 5;
+const LIMIT = 10;
 const DEBOUNCE_TIME = 200;
 
-const CompletedTable = ({ socket }: { socket: Socket }) => {
+const CompletedTable = ({ socket, query }: { socket: Socket; query: string }) => {
   const [monitoringData, setMonitoringData] = useState([]);
   const { access_token } = useAppState();
 
@@ -70,19 +70,37 @@ const CompletedTable = ({ socket }: { socket: Socket }) => {
   const timer = useRef<any>(undefined);
 
   useEffect(() => {
-    setCurrentPage(Math.ceil(currentOffset / 5));
-
-    const getMonitoringData = async () => {
-      const res = await customAxios.get(`monitoring/?state=COMPLETED&limit=${LIMIT}&offset=${currentOffset}`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-      setMonitoringData(res.data);
+    const searchUserMonitoring = async () => {
+      try {
+        const res = await customAxios.get(`monitoring/search?state=COMPLETED&q=${query}`, {
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        if (res.status === 200) {
+          setMonitoringData(res.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     };
+    if (access_token) {
+      if (query.length > 0) {
+        searchUserMonitoring();
+      } else {
+        setCurrentPage(Math.ceil(currentOffset / 5));
 
-    getMonitoringData();
-  }, [currentOffset]);
+        const getMonitoringData = async () => {
+          const res = await customAxios.get(`monitoring/?state=COMPLETED&limit=${LIMIT}&offset=${currentOffset}`, {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          });
+          setMonitoringData(res.data);
+        };
+
+        getMonitoringData();
+      }
+    }
+  }, [access_token, query, currentOffset]);
 
   return (
     <>

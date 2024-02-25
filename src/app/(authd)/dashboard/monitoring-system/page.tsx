@@ -3,7 +3,7 @@ import CompletedTable from "@/components/monitoring/completedTable";
 import ReceivePendingTable from "@/components/monitoring/receivePendingTable";
 import withAuth from "@/hoc/withAuth";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { io } from "socket.io-client";
 
 const socket = io(`${process.env.ws_hostname}/emergency`);
@@ -11,6 +11,9 @@ const socket = io(`${process.env.ws_hostname}/emergency`);
 const MonitoringSystemPage = () => {
   const [activeTab, setActiveTab] = useState<"RECEIVE" | "PENDING" | "COMPLETED">("RECEIVE");
   const router = useRouter();
+
+  const [query, setQuery] = useState<any>("");
+  const timer = useRef<any>(null);
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto bg-white p-4">
@@ -22,7 +25,17 @@ const MonitoringSystemPage = () => {
           <h1 className="mx-4 text-xl">/</h1>
           <h1 className="text-xl font-bold">Monitoring System</h1>
         </div>
-        <input className="border p-1 text-sm" type="text" name="seach_admin" id="seach_admin" placeholder="Search..." />
+        <input
+          onChange={(event) => {
+            clearTimeout(timer.current);
+            timer.current = setTimeout(() => setQuery(event?.target.value), 200);
+          }}
+          className="border p-1 text-sm"
+          type="text"
+          name="seach_admin"
+          id="seach_admin"
+          placeholder="Search names"
+        />
       </div>
       <div className="my-2 flex justify-around border-b border-t py-2">
         <button
@@ -38,8 +51,8 @@ const MonitoringSystemPage = () => {
           <span className="font-bold">COMPLETED</span>
         </button>
       </div>
-      {activeTab === "RECEIVE" && <ReceivePendingTable socket={socket} />}
-      {activeTab === "COMPLETED" && <CompletedTable socket={socket} />}
+      {activeTab === "RECEIVE" && <ReceivePendingTable socket={socket} query={query} />}
+      {activeTab === "COMPLETED" && <CompletedTable socket={socket} query={query} />}
     </div>
   );
 };
