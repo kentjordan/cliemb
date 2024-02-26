@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { IoIosExpand, IoMdCloseCircle } from "react-icons/io";
 import { Socket } from "socket.io-client";
 
-const LIMIT = 10;
+const LIMIT = 5;
 const DEBOUNCE_TIME = 200;
 
 const CompletedTable = ({ socket, query }: { socket: Socket; query: string }) => {
@@ -86,7 +86,7 @@ const CompletedTable = ({ socket, query }: { socket: Socket; query: string }) =>
       if (query.length > 0) {
         searchUserMonitoring();
       } else {
-        setCurrentPage(Math.ceil(currentOffset / 5));
+        setCurrentPage(Math.ceil(currentOffset / LIMIT));
 
         const getMonitoringData = async () => {
           const res = await customAxios.get(`monitoring/?state=COMPLETED&limit=${LIMIT}&offset=${currentOffset}`, {
