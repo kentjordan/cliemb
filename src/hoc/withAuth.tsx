@@ -1,7 +1,7 @@
 "use client";
 import customAxios from "@/api/axios.custom";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setAccessToken } from "@/redux/app.slice";
 
@@ -10,7 +10,7 @@ const withAuth = (Component: () => JSX.Element) => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       const refreshTokens = async () => {
         try {
           const res = await customAxios.get("auth/refresh/admin", {
