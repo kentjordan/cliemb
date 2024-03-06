@@ -7,12 +7,14 @@ import { useEffect, useRef, useState } from "react";
 import { IoIosExpand, IoMdCloseCircle } from "react-icons/io";
 import { Socket } from "socket.io-client";
 
-const LIMIT = 5;
+const LIMIT = 10;
 const DEBOUNCE_TIME = 200;
 
 const CompletedTable = ({ socket, query }: { socket: Socket; query: string }) => {
   const [monitoringData, setMonitoringData] = useState([]);
   const { access_token } = useAppState();
+
+  const [pageNumbers, setPageNumbers] = useState<number>(5);
 
   useEffect(() => {
     if (access_token) {
@@ -352,13 +354,13 @@ const CompletedTable = ({ socket, query }: { socket: Socket; query: string }) =>
             disabled={currentOffset <= 0}
             onClick={() => {
               clearTimeout(timer.current);
-              timer.current = setTimeout(() => setCurrentOffset((prev) => prev - 25), DEBOUNCE_TIME);
+              timer.current = setTimeout(() => setCurrentOffset((prev) => prev - pageNumbers * LIMIT), DEBOUNCE_TIME);
             }}
             className={` px-3 py-2 font-bold text-red-700 disabled:text-stone-400`}
           >
             PREV
           </button>
-          {range(currentOffset, currentOffset + LIMIT).map((e, i) => {
+          {range(currentOffset, currentOffset + pageNumbers).map((e, i) => {
             if (Math.floor(currentOffset / LIMIT) + i + 1 <= Math.ceil(monitoringDataLength / LIMIT))
               return (
                 <button
@@ -387,13 +389,9 @@ const CompletedTable = ({ socket, query }: { socket: Socket; query: string }) =>
               );
           })}
           <button
-            disabled={
-              Math.floor(currentOffset / LIMIT) + (monitoringDataLength % LIMIT) + 1 >=
-                Math.ceil(monitoringDataLength / LIMIT) || monitoringDataLength <= LIMIT
-            }
             onClick={() => {
               clearTimeout(timer.current);
-              timer.current = setTimeout(() => setCurrentOffset((prev) => prev + LIMIT ** 2), DEBOUNCE_TIME);
+              timer.current = setTimeout(() => setCurrentOffset((prev) => prev + pageNumbers * LIMIT), DEBOUNCE_TIME);
             }}
             className={` px-3 font-bold text-red-700 disabled:text-stone-400`}
           >
