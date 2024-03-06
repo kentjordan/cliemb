@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns: [{ hostname: "localhost" }],
+    remotePatterns: [{ hostname: "localhost" }, { hostname: "89.116.134.135" }],
   },
   reactStrictMode: false,
   env: {
