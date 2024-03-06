@@ -10,12 +10,10 @@ const UpdateHotlineDialog = ({ selectedItem, itemUpdateState, updateDialogStateV
 
   const { access_token } = useAppState();
 
-  console.log(selectedItem);
-
   useEffect(() => {
     setValue("name", selectedItem.name);
-    setValue("landline_no", selectedItem.landline_no);
-    setValue("mobile_no", selectedItem.mobile_no);
+    setValue("landline_no", selectedItem.landline_no.join(","));
+    setValue("mobile_no", selectedItem.mobile_no.join(","));
     setValue("city", selectedItem.city);
   }, []);
 
@@ -71,6 +69,12 @@ const UpdateHotlineDialog = ({ selectedItem, itemUpdateState, updateDialogStateV
             (data) => {
               const updateUser = async () => {
                 try {
+                  data = {
+                    ...data,
+                    mobile_no: data.mobile_no.split(","),
+                    landline_no: data.landline_no.split(","),
+                  };
+
                   console.log(data);
 
                   itemUpdateState.setState(true);
@@ -86,11 +90,13 @@ const UpdateHotlineDialog = ({ selectedItem, itemUpdateState, updateDialogStateV
 
                   if (res.status === 200) {
                     itemUpdateState.setState(false);
-                    alert("✅ User updated succesfully!");
+                    alert("✅ Emergency Hotlines updated succesfully!");
                     updateDialogStateVisibility.setStateVisibility(false);
                     location.reload();
                   }
                 } catch (error) {
+                  console.log(error);
+
                   if (error instanceof AxiosError) {
                     alert(error.response?.data.message.join("\n"));
                     itemUpdateState.setState(false);
