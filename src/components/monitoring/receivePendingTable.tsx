@@ -26,6 +26,8 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
 
   const timer = useRef<any>(undefined);
 
+  const [pageNumbers, setPageNumbers] = useState<number>(5);
+
   useEffect(() => {
     if (access_token) {
       const getMonitoringData = async () => {
@@ -34,7 +36,7 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
         });
         setMonitoringDataLength(+sizeRes.data.count);
 
-        const res = await customAxios.get(`monitoring/?limit=${LIMIT}`, {
+        const res = await customAxios.get(`monitoring/?state=PENDING&limit=${LIMIT}&offset=${currentOffset}`, {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
@@ -69,9 +71,9 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
 
   useEffect(() => {
     if (access_token) {
-      setCurrentPage(Math.ceil(currentOffset / 5));
+      setCurrentPage(Math.ceil(currentOffset / LIMIT));
       const getMonitoringData = async () => {
-        const res = await customAxios.get(`monitoring/?limit=${LIMIT}&offset=${currentOffset}`, {
+        const res = await customAxios.get(`monitoring/?state=PENDING&limit=${LIMIT}&offset=${currentOffset}`, {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
@@ -358,18 +360,18 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
             },
           }}
         />
-        <div className="my-6 flex w-full justify-center gap-2">
+        {/* <div className="my-6 flex w-full justify-center gap-2">
           <button
             disabled={currentOffset <= 0}
             onClick={() => {
               clearTimeout(timer.current);
-              timer.current = setTimeout(() => setCurrentOffset((prev) => prev - 25), DEBOUNCE_TIME);
+              timer.current = setTimeout(() => setCurrentOffset((prev) => prev - pageNumbers * LIMIT), DEBOUNCE_TIME);
             }}
             className={` px-3 py-2 font-bold text-red-700 disabled:text-stone-400`}
           >
             PREV
           </button>
-          {range(currentOffset, currentOffset + LIMIT).map((e, i) => {
+          {range(currentOffset, currentOffset + pageNumbers).map((e, i) => {
             if (Math.floor(currentOffset / LIMIT) + i + 1 <= Math.ceil(monitoringDataLength / LIMIT))
               return (
                 <button
@@ -379,7 +381,7 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
                       const page = Math.floor(e / LIMIT) + i;
                       const offset = (Math.floor(currentOffset / LIMIT) + i) * LIMIT;
 
-                      const res = await customAxios.get(`monitoring/?state=COMPLETED&limit=${LIMIT}&offset=${offset}`, {
+                      const res = await customAxios.get(`monitoring/?state=PENDING&limit=${LIMIT}&offset=${offset}`, {
                         headers: {
                           Authorization: `Bearer ${access_token}`,
                         },
@@ -404,13 +406,13 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
             }
             onClick={() => {
               clearTimeout(timer.current);
-              timer.current = setTimeout(() => setCurrentOffset((prev) => prev + LIMIT ** 2), DEBOUNCE_TIME);
+              timer.current = setTimeout(() => setCurrentOffset((prev) => prev + pageNumbers * LIMIT), DEBOUNCE_TIME);
             }}
             className={` px-3 font-bold text-red-700 disabled:text-stone-400`}
           >
             NEXT
           </button>
-        </div>
+        </div> */}
       </div>
     </>
   );
