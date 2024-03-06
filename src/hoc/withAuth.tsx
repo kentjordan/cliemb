@@ -6,28 +6,33 @@ import { useDispatch } from "react-redux";
 import { setAccessToken } from "@/redux/app.slice";
 
 const withAuth = (Component: () => JSX.Element) => {
-  return () => {
-    const router = useRouter();
-    const dispatch = useDispatch();
+  return Object.assign(
+    () => {
+      const router = useRouter();
+      const dispatch = useDispatch();
 
-    useLayoutEffect(() => {
-      const refreshTokens = async () => {
-        try {
-          const res = await customAxios.get("auth/refresh/admin", {
-            withCredentials: true,
-          });
-          dispatch(setAccessToken(res.data.access_token));
-        } catch (error) {
-          console.error({ error });
-          router.replace("/login");
-        }
-      };
+      useLayoutEffect(() => {
+        const refreshTokens = async () => {
+          try {
+            const res = await customAxios.get("auth/refresh/admin", {
+              withCredentials: true,
+            });
+            dispatch(setAccessToken(res.data.access_token));
+          } catch (error) {
+            console.error({ error });
+            router.replace("/login");
+          }
+        };
 
-      refreshTokens();
-    }, []);
+        refreshTokens();
+      }, []);
 
-    return <Component />;
-  };
+      return <Component />;
+    },
+    { displayName: "Component" },
+  );
 };
+
+withAuth.displayName = "withAuth";
 
 export default withAuth;

@@ -46,7 +46,7 @@ const Sidebar = () => {
               <Link href="/dashboard">Dashboard</Link>
             </li>
             <li>
-              <Link href="/admin-log">Admin's Log</Link>
+              <Link href="/admin-log">Admin&apos;s Log</Link>
             </li>
             <li>
               <Link href="/profile">Profile</Link>

@@ -36,7 +36,7 @@ const AdminsLog = () => {
   return (
     <div className="h-full w-full overflow-y-auto bg-white p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold">Admin's Log</h1>
+        <h1 className="text-xl font-bold">Admin&apos;s Log</h1>
         <input
           onChange={(event) => {
             const searchAdminLogs = async () => {
