@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io(`${process.env.ws_hostname}/emergency`);
+const socket = io(`${process.env.ws_hostname}`, { path: "/emergency" });
 
 const MonitoringSystemPage = () => {
   const [activeTab, setActiveTab] = useState<"RECEIVE" | "PENDING" | "COMPLETED">("RECEIVE");
