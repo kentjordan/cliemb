@@ -5,7 +5,6 @@ import useAppState from "@/hooks/useAppState";
 import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import { IoMdCloseCircle, IoIosExpand } from "react-icons/io";
-import range from "@/utils/range";
 
 const LIMIT = 10;
 const DEBOUNCE_TIME = 200;
@@ -61,6 +60,7 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
         });
 
         setMonitoringData(data);
+        new Audio("/resources/on_new_emergency_request.mp3").play();
       });
 
       socket.on("exception", (error) => {
