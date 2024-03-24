@@ -9,7 +9,7 @@ const nextConfig = {
     protocol: process.env.NODE_ENV === "production" ? "https" : "http",
     hostname: process.env.NODE_ENV === "production" ? "cliemb.online" : "localhost:5000",
     rest_hostname: process.env.NODE_ENV === "production" ? "cliemb.online/api/" : "localhost:5000/api/",
-    ws_hostname: process.env.NODE_ENV === "production" ? "cliemb.online/ws" : "localhost:5001/ws",
+    ws_hostname: process.env.NODE_ENV === "production" ? "cliemb.online/ws" : "http://localhost:5001",
   },
 };
 

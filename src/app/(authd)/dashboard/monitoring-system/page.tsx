@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { io } from "socket.io-client";
 
-const socket = io(`${process.env.hostname}`, { path: "/api/emergency" });
+const socket = io(
+  `${process.env.NODE_ENV === "production" ? "cliemb.online/api/emergency" : "http://localhost:5001/ws/emergency"}`,
+);
 
 const MonitoringSystemPage = () => {
   const [activeTab, setActiveTab] = useState<"RECEIVE" | "PENDING" | "COMPLETED">("RECEIVE");
