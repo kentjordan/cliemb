@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import { io } from "socket.io-client";
 
 const socket = io(`${process.env.NODE_ENV === "production" ? "https://cliemb.online" : "http://localhost:5001/ws/emergency"}`, {
-  path: process.env.NODE_ENV === "production" ? "/api/emergency" : "",
+  path: process.env.NODE_ENV === "production" ? "/ws/emergency" : "",
 });
 
 const MonitoringSystemPage = () => {
