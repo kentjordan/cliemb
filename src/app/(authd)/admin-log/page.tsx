@@ -97,6 +97,13 @@ const AdminsLog = () => {
           {
             title: "Position",
             accessorKey: "position",
+            render({ item, data }) {
+              return (
+                <span className="inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                  {data.toUpperCase()}
+                </span>
+              );
+            },
           },
           {
             title: "Date",

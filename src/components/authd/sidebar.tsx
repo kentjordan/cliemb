@@ -35,7 +35,7 @@ const Sidebar = () => {
             <span className="text-base font-bold">
               {admin?.first_name} {admin?.last_name}
             </span>
-            <span className="mt-2 text-xs">{admin?.position}</span>
+            <span className="mt-2 text-xs">{admin?.position.toUpperCase()}</span>
           </div>
         </div>
       </div>
