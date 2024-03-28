@@ -1,8 +1,9 @@
 "use client";
 import { Dispatch, SetStateAction, useState } from "react";
-import { MdEdit, MdDelete } from "react-icons/md";
+import { MdEdit, MdDelete, MdCheckCircle } from "react-icons/md";
 import UpdateUserDialog from "./update-dialog";
 import DeleteDialog from "./delete-dialog";
+import ApprovalDialog from "./approval-dialog";
 
 type IItemState<T> = {
   state: T;
@@ -25,6 +26,11 @@ export interface IUpdateDialogProps {
   itemUpdateState: IItemState<boolean>;
 }
 
+export interface IApprovalDialogProps {
+  approvalDialogStateVisibility: IDialogState<boolean>;
+  selectedItem: any;
+}
+
 interface ITableProps {
   columns: Array<{ title: string; accessorKey: string | undefined; render?: (args: { item: any; data: any }) => JSX.Element }>;
   data: Array<any>;
@@ -35,9 +41,12 @@ interface ITableProps {
   updateDialog: {
     render: (props: IUpdateDialogProps) => JSX.Element;
   };
+  approvalDialog: {
+    render: (props: IApprovalDialogProps) => JSX.Element;
+  };
 }
 
-function Table({ columns, data, enabledActions, deleteDialog, updateDialog }: ITableProps) {
+function Table({ columns, data, enabledActions, deleteDialog, updateDialog, approvalDialog }: ITableProps) {
   if (enabledActions)
     columns = [{ title: "Actions", accessorKey: undefined, render: ({ item, data }) => <>{data}</> }, ...columns];
 
@@ -45,12 +54,22 @@ function Table({ columns, data, enabledActions, deleteDialog, updateDialog }: IT
   const [itemUpdateState, setItemUpdateState] = useState(false);
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isItemDeleting, setIsItemDeleting] = useState(false);
+  // const [isItemDeleting, setIsItemDeleting] = useState(false);
+
+  const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
 
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   return (
     <div className="relative flex-1">
+      {isApprovalDialogOpen && (
+        <ApprovalDialog>
+          <approvalDialog.render
+            approvalDialogStateVisibility={{ state: isApprovalDialogOpen, setStateVisibility: setIsApprovalDialogOpen }}
+            selectedItem={selectedItem}
+          />
+        </ApprovalDialog>
+      )}
       {isDeleteDialogOpen && (
         <DeleteDialog>
           <deleteDialog.render
@@ -87,7 +106,7 @@ function Table({ columns, data, enabledActions, deleteDialog, updateDialog }: IT
                     {enabledActions && (
                       <td className="my-2 flex h-full justify-center">
                         <MdEdit
-                          className="mr-2 cursor-pointer"
+                          className="cursor-pointer"
                           size={24}
                           onClick={() => {
                             setSelectedItem(item);
@@ -95,13 +114,23 @@ function Table({ columns, data, enabledActions, deleteDialog, updateDialog }: IT
                           }}
                         />
                         <MdDelete
-                          className="ml-2 cursor-pointer text-red-700"
+                          className="mx-4 cursor-pointer text-red-700"
                           size={24}
                           onClick={() => {
                             setSelectedItem(item);
                             setIsDeleteDialogOpen(true);
                           }}
                         />
+                        {!item.is_account_approved && (
+                          <MdCheckCircle
+                            className="mr-2 cursor-pointer text-green-700"
+                            size={24}
+                            onClick={() => {
+                              setSelectedItem(item);
+                              setIsApprovalDialogOpen(true);
+                            }}
+                          />
+                        )}
                       </td>
                     )}
                     {columns.slice(enabledActions ? 1 : 0, columns.length).map(({ accessorKey, render }) => (

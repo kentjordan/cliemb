@@ -1,5 +1,6 @@
 "use client";
 import customAxios from "@/api/axios.custom";
+import ApprovalUserDialog from "@/components/cit-department/approvalUser.dialog";
 import DeleteUserDialog from "@/components/cit-department/deleteUser.dialog";
 import UpdateUserDialog from "@/components/cit-department/updateUser.dialog";
 import Table from "@/components/ui/table/table";
@@ -149,6 +150,7 @@ const CITDepartmentPage = () => {
         data={tableData}
         deleteDialog={{ render: DeleteUserDialog }}
         updateDialog={{ render: UpdateUserDialog }}
+        approvalDialog={{ render: ApprovalUserDialog }}
       />
     </div>
   );
