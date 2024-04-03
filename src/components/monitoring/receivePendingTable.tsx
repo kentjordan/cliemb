@@ -63,6 +63,23 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
         new Audio("/resources/on_new_emergency_request.mp3").play();
       });
 
+      socket.on("web-update-monitoring", async () => {
+        const res = await customAxios.get("monitoring", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+
+        const data = res.data.map((e: any) => {
+          return {
+            ...e,
+          };
+        });
+
+        setMonitoringData(data);
+        new Audio("/resources/on_update_emergency_request.mp3").play();
+      });
+
       socket.on("exception", (error) => {
         console.log(error);
       });
@@ -160,6 +177,11 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
       )}
       <div className="relative h-full">
         <Table
+          approvalDialog={{
+            render(props) {
+              return <></>;
+            },
+          }}
           enabledActions={false}
           columns={[
             {
@@ -185,10 +207,28 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
             {
               title: "Room",
               accessorKey: "room",
+              render({ item, data }) {
+                return (
+                  <span
+                    className={`inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap rounded p-2 text-sm ${item["room_updates"].isUpdated ? "bg-green-100" : "bg-transparent"}`}
+                  >
+                    {data}
+                  </span>
+                );
+              },
             },
             {
               title: "Floor No.",
               accessorKey: "floor_no",
+              render({ item, data }) {
+                return (
+                  <span
+                    className={`inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap rounded p-2 text-sm ${item["floor_no_updates"].isUpdated ? "bg-green-100" : "bg-transparent"}`}
+                  >
+                    {data}
+                  </span>
+                );
+              },
             },
             {
               title: "Photo",
@@ -225,7 +265,9 @@ const ReceivePendingTable = ({ socket, query }: { socket: Socket; query: string 
                     }}
                   >
                     <IoIosExpand className="mx-1 text-blue-600" />
-                    <span className="inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap text-sm">
+                    <span
+                      className={`inline-block w-[16ch] overflow-hidden text-ellipsis whitespace-nowrap rounded p-2 text-sm ${item["narrative_updates"].isUpdated ? "bg-green-100" : "bg-transparent"}`}
+                    >
                       {data}
                     </span>
                   </button>
