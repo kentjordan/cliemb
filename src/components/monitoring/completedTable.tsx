@@ -149,6 +149,7 @@ const CompletedTable = ({ socket, query }: { socket: Socket; query: string }) =>
           </div>
         )}
         <Table
+          approvalDialog={{render: (props: any) => <></>}}
           enabledActions={false}
           columns={[
             {
