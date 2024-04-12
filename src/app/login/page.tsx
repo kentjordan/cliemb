@@ -28,7 +28,7 @@ const LoginPage = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="flex h-screen w-full flex-col bg-cover" style={{ backgroundImage: `url(${BSUBuilding.src})` }}>
+    <div className="flex min-h-screen w-full flex-col bg-cover" style={{ backgroundImage: `url(${BSUBuilding.src})` }}>
       {/* Navbar */}
       <div className="flex justify-center bg-black/50 py-4 text-white md:justify-between">
         <div className="hidden flex-[0.5] items-center justify-start text-xl md:flex">

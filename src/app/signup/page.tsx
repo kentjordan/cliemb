@@ -28,7 +28,7 @@ const SignupPage = () => {
   const dispatch = useDispatch();
 
   return (
-    <div style={{ backgroundImage: `url(${BSUBuilding.src})` }} className="flex h-full w-full flex-col bg-cover">
+    <div style={{ backgroundImage: `url(${BSUBuilding.src})` }} className="flex min-h-screen w-full flex-col bg-cover">
       {/* Navbar */}
       <div className="flex justify-center bg-black/50 py-4 text-white md:justify-between">
         <div className="hidden flex-[0.5] items-center justify-start text-xl md:flex">
@@ -42,7 +42,7 @@ const SignupPage = () => {
       {/* Body */}
       <div className="flex flex-1 items-center justify-center bg-black/50 md:justify-between">
         {/* Login Form */}
-        <div className="m-4 flex h-fit w-full flex-col items-center rounded-2xl bg-white p-8 shadow md:m-0 md:ml-16 md:w-fit md:px-16 md:py-10">
+        <div className="m-8 flex h-fit w-full flex-col items-center rounded-2xl bg-white p-8 shadow md:m-0 md:ml-16 md:w-fit md:px-16 md:py-10">
           <Image src={BSULogo} quality={100} width={140} height={140} alt="BSU Logo" />
           <h1 className="my-8 text-xl font-bold">ADMIN REGISTER</h1>
           <form
