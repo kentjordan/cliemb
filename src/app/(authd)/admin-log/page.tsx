@@ -83,6 +83,7 @@ const AdminsLog = () => {
         />
       </div>
       <Table
+      approvalDialog={{render: (props: any) => <></>}}
         data={data}
         enabledActions={false}
         columns={[

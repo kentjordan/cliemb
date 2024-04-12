@@ -62,6 +62,7 @@ const EmergencyHotlinesPage = () => {
         />
       </div>
       <Table
+        approvalDialog={{render: (props: any) => <></>}}
         enabledActions={true}
         columns={[
           {
