@@ -9,7 +9,6 @@ import { AxiosError } from "axios";
 import Image from "next/image";
 import IAdminInfo from "@/types/IAdminInfo";
 
-
 const ProfilePage = () => {
   const { register, handleSubmit, setValue, resetField } = useForm({});
 
@@ -247,8 +246,8 @@ const ProfilePage = () => {
                       quality={100}
                       className="my-2 h-[85%] w-[85%]"
                       src={adminInfo?.profile_photo}
-                      width={70}
-                      height={70}
+                      width={500}
+                      height={500}
                       alt="Profile Photo"
                     />
                   ) : (
