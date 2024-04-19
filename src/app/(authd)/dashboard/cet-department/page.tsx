@@ -9,7 +9,7 @@ import useAppState from "@/hooks/useAppState";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const CITDepartmentPage = () => {
+const CETDepartmentPage = () => {
   const router = useRouter();
 
   const [tableData, setTableData] = useState([]);
@@ -75,7 +75,7 @@ const CITDepartmentPage = () => {
             Dashboard
           </h1>
           <h1 className="mx-4 text-xl">/</h1>
-          <h1 className="text-xl font-bold">CIT Department</h1>
+          <h1 className="text-xl font-bold">CET Department</h1>
         </div>
         <input
           onChange={(event) => {
@@ -156,4 +156,4 @@ const CITDepartmentPage = () => {
   );
 };
 
-export default withAuth(CITDepartmentPage);
+export default withAuth(CETDepartmentPage);
